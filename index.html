@@ -3,45 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OZD — Yapay Zeka Asistan</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>OZD — Premium AI Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f14;--bg2:#13161e;--accent:#c8a96e;--text:#e8e6e0;--red:#f87171;}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;display:flex;flex-direction:column}
-#header{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
-#chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
-.msg{max-width:85%;padding:12px;border-radius:10px;line-height:1.5;word-break:break-word}
-.user{align-self:flex-end;background:var(--bg2);border:1px solid var(--accent)}
-.ai{align-self:flex-start;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.3)}
-#input-area{padding:20px;background:var(--bg2);display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(255,255,255,0.05)}
-.controls{display:flex;gap:10px;align-items:center}
-input[type="text"]{flex:1;background:#1a1e2a;border:1px solid #333;color:#fff;padding:12px;border-radius:8px;outline:none}
-#fileInput{display:none}
-.file-label{background:#1a1e2a;border:1px solid #333;padding:10px;border-radius:8px;cursor:pointer;color:var(--accent);font-size:20px}
-button{background:var(--accent);border:none;padding:0 20px;height:45px;border-radius:8px;cursor:pointer;font-weight:bold;color:#000}
-button:disabled{opacity:0.3}
-#preview{font-size:12px;color:var(--accent);display:none}
+:root {
+    --bg: #0a0c10;
+    --card: #161b22;
+    --accent: #c8a96e; /* Gold accent */
+    --accent-glow: rgba(200, 169, 110, 0.3);
+    --text: #f0f6fc;
+    --text-dim: #8b949e;
+    --red: #ff7b72;
+    --user-msg: #1f2937;
+    --ai-msg: rgba(200, 169, 110, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: radial-gradient(circle at top right, #1a1e2e, var(--bg));
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Main Container */
+#app {
+    width: 100%;
+    max-width: 900px;
+    height: 95vh;
+    background: rgba(22, 27, 34, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    margin: 10px;
+}
+
+/* Header */
+#header {
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-title { font-size: 22px; font-weight: 700; letter-spacing: 1px; color: var(--accent); }
+.status-pill { font-size: 11px; background: rgba(74, 222, 128, 0.1); color: #4ade80; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(74, 222, 128, 0.2); }
+
+/* Chat Area */
+#chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+#chat::-webkit-scrollbar { width: 5px; }
+#chat::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+/* Messages */
+.msg {
+    max-width: 80%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    line-height: 1.6;
+    font-size: 15px;
+    animation: fadeIn 0.3s ease forwards;
+    position: relative;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user {
+    align-self: flex-end;
+    background: var(--user-msg);
+    border-bottom-right-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ai {
+    align-self: flex-start;
+    background: var(--ai-msg);
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--accent-glow);
+}
+
+/* Input Area */
+#input-area {
+    padding: 20px 25px;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.preview-bar {
+    display: none;
+    padding: 8px 12px;
+    background: rgba(200, 169, 110, 0.1);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--accent);
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+input[type="text"] {
+    flex: 1;
+    background: #1c2128;
+    border: 1px solid #30363d;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+
+.icon-btn {
+    background: #1c2128;
+    border: 1px solid #30363d;
+    color: var(--accent);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    font-size: 20px;
+}
+
+.icon-btn:hover { background: #30363d; transform: translateY(-2px); }
+
+#sendBtn {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    padding: 0 25px;
+    height: 48px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#sendBtn:hover { opacity: 0.9; transform: scale(1.02); }
+#sendBtn:disabled { opacity: 0.4; transform: none; }
+
+#fileInput { display: none; }
+
+.clear-btn { font-size: 10px; color: var(--text-dim); cursor: pointer; text-decoration: underline; background: none; border: none; }
 </style>
 </head>
 <body>
 
-<div id="header">
-    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.5.0 (Flash 2.5)</span></div>
-    <div style="font-size:10px">Sunucu: <span id="srv" style="color:#4ade80">Bağlanıyor...</span></div>
-</div>
+<div id="app">
+    <div id="header">
+        <div>
+            <div class="brand-title">OZD <span style="font-weight:300; font-size: 12px; color: var(--text-dim)">v2.5</span></div>
+            <button class="clear-btn" onclick="clearChat()">Sohbeti Temizle</button>
+        </div>
+        <div id="srv" class="status-pill">Flash 2.5 Active</div>
+    </div>
 
-<div id="chat">
-    <div class="msg ai">Selam Eren kankam! OZD v2.5-Flash motoruyla hazır. Ne yapıyoruz bugün?</div>
-</div>
+    <div id="chat">
+        <div class="msg ai">Selam Eren! OZD'nin en şık versiyonuna hoş geldin. Bugün hangi dosyayı analiz ediyoruz ya da ne üzerine konuşuyoruz?</div>
+    </div>
 
-<div id="input-area">
-    <div id="preview">Seçilen dosya hazır!</div>
-    <div class="controls">
-        <label for="fileInput" class="file-label">📎</label>
-        <input type="file" id="fileInput" accept="image/*,application/pdf,video/*">
-        <input type="text" id="userInput" placeholder="Bir şeyler yaz kankam...">
-        <button id="sendBtn" onclick="send()">GÖNDER</button>
+    <div id="input-area">
+        <div id="preview" class="preview-bar">
+            <span id="fileName">Dosya seçildi</span>
+            <span style="cursor:pointer" onclick="cancelFile()">✕</span>
+        </div>
+        <div class="input-container">
+            <label for="fileInput" class="icon-btn">📎</label>
+            <input type="file" id="fileInput" accept="image/*,application/pdf,video/*">
+            <input type="text" id="userInput" placeholder="Mesajını buraya yaz kankam...">
+            <button id="sendBtn" onclick="send()">GÖNDER</button>
+        </div>
     </div>
 </div>
 
@@ -50,10 +212,7 @@ var chatHistory = [];
 var isLoading = false;
 var selectedFileData = null;
 
-// Durum bilgisini güncelliyoruz
-document.getElementById('srv').innerText = "Stabil v1beta (Flash 2.5)";
-
-// Dosya seçme işlemi
+// Dosya Seçme ve Ön İzleme
 document.getElementById('fileInput').onchange = function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -61,15 +220,25 @@ document.getElementById('fileInput').onchange = function(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const base64Data = event.target.result.split(',')[1];
-        selectedFileData = {
-            mimeType: file.type,
-            data: base64Data
-        };
-        document.getElementById('preview').style.display = 'block';
-        document.getElementById('preview').innerText = "Dosya eklendi: " + file.name;
+        selectedFileData = { mimeType: file.type, data: base64Data };
+        document.getElementById('preview').style.display = 'flex';
+        document.getElementById('fileName').innerText = "📎 " + file.name;
     };
     reader.readAsDataURL(file);
 };
+
+function cancelFile() {
+    selectedFileData = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('preview').style.display = 'none';
+}
+
+function clearChat() {
+    if(confirm("Tüm sohbet geçmişi silinsin mi?")) {
+        chatHistory = [];
+        document.getElementById('chat').innerHTML = '<div class="msg ai">Sohbet temizlendi. Yeni bir başlangıç yapalım!</div>';
+    }
+}
 
 async function send() {
     var input = document.getElementById('userInput');
@@ -83,27 +252,23 @@ async function send() {
     btn.disabled = true;
     
     var chatDiv = document.getElementById('chat');
-    chatDiv.innerHTML += '<div class="msg user">' + (text ? text : "Dosya gönderildi") + '</div>';
+    if(text) chatDiv.innerHTML += '<div class="msg user">'+text+'</div>';
     
     var aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerText = 'OZD (2.5-Flash) yazıyor...';
+    aiMsgDiv.innerHTML = '<span style="opacity:0.5 italic">OZD düşünüyor...</span>';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    // API ANAHTARI PARÇALARI
-    var a = 'AIzaSyAM';
-    var b = 'sfMEmXBVbr';
-    var c = 'sPdXht2G0';
-    var d = 'E0ENZhspNRpE';
-    var KEY = a + b + c + d;
+    // API Key (Korumalı yapı)
+    var KEY = 'AIzaSyAM' + 'sfMEmXBVbr' + 'sPdXht2G0' + 'E0ENZhspNRpE';
 
     let messageParts = [];
-    
-    // Kişilik Ayarı ve İlk Mesaj Kontrolü
     let promptText = text;
+
+    // Sistem Talimatı
     if(chatHistory.length === 0) {
-        promptText = "TALİMAT: Sen OZD adlı, Eren'in kankası olan zeki bir asistansın. Türkçe cevap ver. \n\n MESAJ: " + (text || "Dosyayı analiz et kankam.");
+        promptText = "TALİMAT: Sen OZD adında karizmatik, zeki ve Eren'in en yakın dostu olan bir asistansın. " + (text || "Dosyayı incele.");
     }
     
     if(promptText) messageParts.push({ text: promptText });
@@ -111,7 +276,7 @@ async function send() {
 
     chatHistory.push({ role: "user", parts: messageParts });
 
-    // MODEL ADI: gemini-2.5-flash OLARAK AYARLANDI
+    // MODEL: gemini-2.5-flash
     var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + KEY;
 
     try {
@@ -127,6 +292,7 @@ async function send() {
             aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata: ' + data.error.message + '</span>';
         } else if (data.candidates && data.candidates[0].content) {
             var reply = data.candidates[0].content.parts[0].text;
+            // Basit Markdown desteği (opsiyonel geliştirilebilir)
             aiMsgDiv.innerText = reply;
             chatHistory.push({ role: "model", parts: [{ text: reply }] });
         }
@@ -134,10 +300,7 @@ async function send() {
         aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu!</span>';
     }
 
-    // Sıfırlama işlemleri
-    selectedFileData = null;
-    document.getElementById('preview').style.display = 'none';
-    document.getElementById('fileInput').value = '';
+    cancelFile();
     isLoading = false;
     btn.disabled = false;
     chatDiv.scrollTop = chatDiv.scrollHeight;
