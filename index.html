@@ -96,23 +96,24 @@
 
 <div class="chat-container">
     <div class="chat-header"><h1>OZD</h1></div>
-    <div id="chat-window"><div class="message bot-message">Sistem aktif kanka. OZD emrine amade!</div></div>
+    <div id="chat-window"><div class="message bot-message">Selam kanka, OZD sistemi güncellendi. Artık %100 hazırız!</div></div>
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Mesajını yaz..." autocomplete="off">
+        <input type="text" id="user-input" placeholder="OZD'ye bir şeyler sor..." autocomplete="off">
         <button id="send-btn">Gönder</button>
     </div>
 </div>
 
 <script>
     // API Key Parçaları
-    const _k1 = "AIzaSyAM";
-    const _k2 = "sfMEmXBV";
-    const _k3 = "brsPdXht";
-    const _k4 = "2G0E0ENZhspNRpE";
+    const p_1 = "AIzaSyAM";
+    const p_2 = "sfMEmXBV";
+    const p_3 = "brsPdXht";
+    const p_4 = "2G0E0ENZhspNRpE";
     
-    const KEY = _k1 + _k2 + _k3 + _k4;
-    // v1beta sürümünü kullanarak daha geniş destek alıyoruz
-    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`;
+    const FULL_KEY = (p_1 + p_2 + p_3 + p_4).trim();
+    
+    // v1 Sürümünü kullanıyoruz, bu en stabil olanıdır
+    const URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${FULL_KEY}`;
 
     const inputField = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
@@ -125,26 +126,31 @@
         appendMessage(text, "user-message");
         inputField.value = "";
 
-        const loading = appendMessage("OZD düşünüyor...", "bot-message loading-text");
+        const loading = appendMessage("OZD cevaplıyor...", "bot-message loading-text");
 
-        // Talimatı direkt mesajın içine yediriyoruz (En garanti yol budur kanka)
-        const promptInstruction = "Senin adın OZD. Sade, modern ve samimi bir yapay zekasın. Cevaplarını buna göre ver. Kullanıcının mesajı: " + text;
+        // Gönderdiğimiz veri yapısı
+        const payload = {
+            contents: [{
+                parts: [{
+                    text: "Senin adın OZD. Yardımsever, samimi ve zeki bir asistansın. Kullanıcının mesajı şu: " + text
+                }]
+            }]
+        };
 
         try {
             const response = await fetch(URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptInstruction }] }]
-                })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
-            chatWindow.removeChild(loading);
+            if (chatWindow.contains(loading)) chatWindow.removeChild(loading);
 
             if (data.error) {
-                appendMessage("Hata oluştu kanka: " + data.error.message, "error-message");
-                console.error(data.error);
+                // Hata mesajını daha anlaşılır basıyoruz
+                appendMessage("Hata: " + data.error.message + " (" + data.error.status + ")", "error-message");
+                console.error("API Hatası:", data.error);
                 return;
             }
 
@@ -152,12 +158,13 @@
                 const reply = data.candidates[0].content.parts[0].text;
                 appendMessage(reply, "bot-message");
             } else {
-                appendMessage("Gemini boş döndü, bir daha sorsana kanka.", "error-message");
+                appendMessage("OZD şu an cevap veremedi kanka.", "error-message");
             }
 
         } catch (err) {
             if (chatWindow.contains(loading)) chatWindow.removeChild(loading);
-            appendMessage("Bağlantı hatası! İnternetini kontrol et kanka.", "error-message");
+            appendMessage("İnternet koptu galiba kanka.", "error-message");
+            console.error("Fetch Hatası:", err);
         }
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
