@@ -3,42 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZD | Yapay Zeka</title>
+    <title>OZD AI | Geleceğin Asistanı</title>
     <style>
-        /* Modern Koyu Tema Ayarları */
+        /* Sade, Şık ve Modern Koyu Tema */
         :root {
-            --bg-color: #0d1117;
-            --chat-bg: #161b22;
-            --user-msg: #21262d;
-            --ai-msg: #238636; /* Şık bir yeşil tonu OZD için */
-            --text-color: #c9d1d9;
-            --accent-color: #58a6ff;
+            --bg: #0a0a0a;
+            --surface: #1a1a1a;
+            --accent: #00d2ff;
+            --text: #ffffff;
+            --ai-bubble: #252525;
+            --user-bubble: #005a70;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
 
-        /* Başlık Alanı */
         header {
-            padding: 15px;
+            padding: 20px;
             text-align: center;
-            background-color: var(--chat-bg);
-            border-bottom: 1px solid #30363d;
+            border-bottom: 1px solid #333;
+            font-size: 24px;
             font-weight: bold;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: var(--accent-color);
+            color: var(--accent);
+            letter-spacing: 4px;
         }
 
-        /* Sohbet Alanı */
         #chat-window {
             flex: 1;
             overflow-y: auto;
@@ -46,163 +42,128 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            scroll-behavior: smooth;
         }
 
-        .bubble {
-            max-width: 85%;
+        .msg {
+            max-width: 80%;
             padding: 12px 18px;
-            border-radius: 18px;
-            line-height: 1.6;
-            font-size: 0.95rem;
+            border-radius: 15px;
+            line-height: 1.5;
+            font-size: 15px;
             word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .user { align-self: flex-end; background-color: var(--user-bubble); border-bottom-right-radius: 2px; }
+        .ai { align-self: flex-start; background-color: var(--ai-bubble); border-bottom-left-radius: 2px; border: 1px solid #333; }
 
-        .user-bubble {
-            align-self: flex-end;
-            background-color: var(--user-msg);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .ai-bubble {
-            align-self: flex-start;
-            background-color: var(--chat-bg);
-            border: 1px solid #30363d;
-            border-bottom-left-radius: 4px;
-        }
-
-        /* Giriş Alanı */
-        .input-container {
-            background-color: var(--chat-bg);
+        .input-area {
             padding: 20px;
+            background-color: var(--surface);
             display: flex;
             gap: 10px;
-            border-top: 1px solid #30363d;
+            border-top: 1px solid #333;
         }
 
         input {
             flex: 1;
-            background-color: var(--bg-color);
-            border: 1px solid #30363d;
-            border-radius: 10px;
+            background: #222;
+            border: 1px solid #444;
             color: white;
-            padding: 12px 15px;
+            padding: 12px;
+            border-radius: 8px;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--accent-color);
         }
 
         button {
-            background-color: var(--accent-color);
-            color: white;
+            background-color: var(--accent);
+            color: black;
             border: none;
-            padding: 0 20px;
-            border-radius: 10px;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 600;
         }
 
-        button:hover {
-            opacity: 0.9;
-        }
-
-        /* Yükleme Göstergesi */
-        .dots {
-            font-style: italic;
-            color: #8b949e;
-            font-size: 0.8rem;
-        }
+        .loading { color: #888; font-style: italic; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <header>OZD AI</header>
+<header>OZD</header>
 
-    <div id="chat-window">
-        <div class="bubble ai-bubble">Merhaba! Ben OZD. Size bugün nasıl yardımcı olabilirim?</div>
-    </div>
+<div id="chat-window">
+    <div class="msg ai">Merhaba! Ben OZD. API bağlantısını tekrar kuruyorum. Bana bir şey sorabilirsin!</div>
+</div>
 
-    <div class="input-container">
-        <input type="text" id="user-input" placeholder="OZD'ye bir şeyler sorun..." autocomplete="off">
-        <button id="send-btn">Gönder</button>
-    </div>
+<div class="input-area">
+    <input type="text" id="user-in" placeholder="Mesajınızı buraya yazın..." autocomplete="off">
+    <button id="send-btn">GÖNDER</button>
+</div>
 
-    <script>
-        // API Anahtarını Parçalara Bölerek Saklama (Güvenlik Önlemi)
-        const part1 = "AIzaSyAMsfME";
-        const part2 = "mXBVbrsPdXh";
-        const part3 = "t2G0E0ENZhsp";
-        const part4 = "NRpE";
-        
-        const KEY = part1 + part2 + part3 + part4;
-        // v1beta hatasından kaçınmak için stabil 'v1' endpointi kullanılıyor
-        const ENDPOINT = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${KEY}`;
+<script>
+    // API Anahtarını 4 Parçaya Bölerek İşliyoruz
+    const k1 = "AIzaSyAMsfME";
+    const k2 = "mXBVbrsPdXh";
+    const k3 = "t2G0E0ENZhsp";
+    const k4 = "NRpE";
+    const FINAL_KEY = k1 + k2 + k3 + k4;
 
-        const chatWindow = document.getElementById('chat-window');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
+    // 2026 yılı için en güncel model ismi denemesi
+    // Eğer bu da çalışmazsa 'gemini-pro' veya 'gemini-1.5-flash' olarak değiştirilebilir.
+    const MODEL_NAME = "gemini-1.5-flash-latest"; 
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${FINAL_KEY}`;
 
-        async function handleChat() {
-            const text = userInput.value.trim();
-            if (!text) return;
+    const chatWin = document.getElementById('chat-window');
+    const input = document.getElementById('user-in');
+    const btn = document.getElementById('send-btn');
 
-            // Kullanıcı mesajını ekle
-            addBubble(text, 'user-bubble');
-            userInput.value = '';
+    async function askOZD() {
+        const text = input.value.trim();
+        if (!text) return;
 
-            // Yükleme durumu
-            const loadingBubble = addBubble("OZD yazıyor...", "ai-bubble dots");
+        addMsg(text, 'user');
+        input.value = '';
 
-            try {
-                const response = await fetch(ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
+        const loadDiv = addMsg("OZD yanıt hazırlıyor...", "ai loading");
 
-                const data = await response.json();
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: text }] }]
+                })
+            });
 
-                if (!response.ok) {
-                    throw new Error(data.error ? data.error.message : "Sunucu hatası.");
-                }
+            const data = await response.json();
 
-                const aiText = data.candidates[0].content.parts[0].text;
-                
-                // Yükleme mesajını kaldır ve gerçek yanıtı ekle
-                loadingBubble.remove();
-                addBubble(aiText, 'ai-bubble');
-
-            } catch (err) {
-                loadingBubble.innerText = "Hata: " + err.message;
-                console.error("Detaylı Hata:", err);
+            if (!response.ok) {
+                // Hata durumunda API'den gelen mesajı göster
+                throw new Error(data.error ? data.error.message : "Bağlantı Hatası");
             }
-        }
 
-        function addBubble(text, className) {
-            const div = document.createElement('div');
-            div.className = `bubble ${className}`;
-            div.innerText = text;
-            chatWindow.appendChild(div);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            return div;
-        }
+            const aiText = data.candidates[0].content.parts[0].text;
+            loadDiv.remove();
+            addMsg(aiText, 'ai');
 
-        sendBtn.addEventListener('click', handleChat);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChat();
-        });
-    </script>
+        } catch (err) {
+            loadDiv.innerText = "Hata oluştu: " + err.message;
+            console.error("Hata Detayı:", err);
+        }
+    }
+
+    function addMsg(text, type) {
+        const d = document.createElement('div');
+        d.className = `msg ${type}`;
+        d.innerText = text;
+        chatWin.appendChild(d);
+        chatWin.scrollTop = chatWin.scrollHeight;
+        return d;
+    }
+
+    btn.addEventListener('click', askOZD);
+    input.addEventListener('keypress', (e) => { if(e.key === 'Enter') askOZD(); });
+</script>
+
 </body>
 </html>
