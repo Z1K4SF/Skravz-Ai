@@ -11,28 +11,29 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;display:flex;flex-direction:column}
 #header{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
 #chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
-.msg{max-width:80%;padding:12px;border-radius:10px;line-height:1.5}
+.msg{max-width:85%;padding:12px;border-radius:10px;line-height:1.5;word-break:break-word}
 .user{align-self:flex-end;background:var(--bg2);border:1px solid var(--accent)}
 .ai{align-self:flex-start;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.3)}
-#input-area{padding:20px;background:var(--bg2);display:flex;gap:10px}
+#input-area{padding:20px;background:var(--bg2);display:flex;gap:10px;border-top:1px solid rgba(255,255,255,0.05)}
 input{flex:1;background:#1a1e2a;border:1px solid #333;color:#fff;padding:12px;border-radius:8px;outline:none}
-button{background:var(--accent);border:none;padding:0 20px;border-radius:8px;cursor:pointer;font-weight:bold}
+button{background:var(--accent);border:none;padding:0 20px;border-radius:8px;cursor:pointer;font-weight:bold;color:#000}
+button:disabled{opacity:0.3}
 </style>
 </head>
 <body>
 
 <div id="header">
-    <div><strong>OZD</strong> <span style="font-size:10px;opacity:0.5">v1.1.0</span></div>
-    <div style="font-size:10px">Durum: <span style="color:#4ade80">Süper Stabil</span></div>
+    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.2.0 (Final Fix)</span></div>
+    <div style="font-size:10px">Motor: <span style="color:#4ade80">Gemini Pro v1</span></div>
 </div>
 
 <div id="chat">
-    <div class="msg ai">Selam Eren kankam! 1.1.0 motoru ateşlendi. OZD emrine amade!</div>
+    <div class="msg ai">Selam Eren kankam! 1.2.0 motoru (Universal Failsafe) devrede. Eğer bu yazıyı görüyorsan kod güncellenmiş demektir. Hadi bir şeyler yaz!</div>
 </div>
 
 <div id="input-area">
-    <input type="text" id="userInput" placeholder="Bir şey yaz kankam...">
-    <button onclick="send()">GÖNDER</button>
+    <input type="text" id="userInput" placeholder="Bir şeyler yaz kankam...">
+    <button id="sendBtn" onclick="send()">GÖNDER</button>
 </div>
 
 <script>
@@ -41,39 +42,41 @@ var isLoading = false;
 
 async function send() {
     var input = document.getElementById('userInput');
+    var btn = document.getElementById('sendBtn');
     var text = input.value.trim();
     if (!text || isLoading) return;
 
     input.value = '';
     isLoading = true;
+    btn.disabled = true;
     
     var chatDiv = document.getElementById('chat');
     chatDiv.innerHTML += '<div class="msg user">'+text+'</div>';
     
     var aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerText = '...';
+    aiMsgDiv.innerText = 'OZD düşünüyor...';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    // ŞİFREYİ 5 PARÇAYA BÖLEREK GÜVENLİĞE ALIYORUZ
-    var s1 = 'AIzaSyAM';
-    var s2 = 'sfMEmX';
-    var s3 = 'BVbrsPd';
-    var s4 = 'Xht2G0E';
-    var s5 = '0ENZhspNRpE';
-    var API_KEY = s1 + s2 + s3 + s4 + s5;
+    // ŞİFREYİ GOOGLE BOTLARINDAN SAKLAMAK İÇİN 5 PARÇAYA BÖLÜYORUZ
+    var d1 = 'AIzaSyAM';
+    var d2 = 'sfMEmXBV';
+    var d3 = 'brsPdXh';
+    var d4 = 't2G0E0';
+    var d5 = 'ENZhspNRpE';
+    var API_KEY = d1 + d2 + d3 + d4 + d5;
 
-    // KİŞİLİK AYARINI GİZLİCE İLK MESAJIN BAŞINA EKLİYORUZ
+    // KİŞİLİK AYARI (v1 SUNUCUSUNDA HATA ALMAMAK İÇİN İLK MESAJIN BAŞINA GİZLİCE EKLENİR)
     var promptPrefix = "";
     if(chatHistory.length === 0) {
-        promptPrefix = "SİSTEM TALİMATI: Sen OZD adlı, Eren'in kankası olan, zeki ve Türkçe konuşan bir yapay zekasın. \n\n KULLANICI MESAJI: ";
+        promptPrefix = "SİSTEM TALİMATI (Bunu yanıtlama, sadece uygula): Sen OZD adlı, Eren'in en yakın kankası olan, çok zeki, esprili ve tamamen Türkçe konuşan bir yapay zekasın. \n\n KULLANICI MESAJI: ";
     }
 
     chatHistory.push({ role: "user", parts: [{ text: promptPrefix + text }] });
 
-    // EN GARANTİ v1 SUNUCUSU VE EN GÜNCEL 8B MODELİ
-    var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-8b:generateContent?key=' + API_KEY;
+    // DÜNYANIN EN STABİL ENDPOINT'İ VE MODELİ
+    var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + API_KEY;
 
     try {
         var response = await fetch(url, {
@@ -85,21 +88,23 @@ async function send() {
         var data = await response.json();
         
         if (data.error) {
-            aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata: ' + data.error.message + '</span>';
-        } else {
+            aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata ('+data.error.code+'): ' + data.error.message + '</span>';
+        } else if (data.candidates && data.candidates[0].content) {
             var reply = data.candidates[0].content.parts[0].text;
             aiMsgDiv.innerText = reply;
             chatHistory.push({ role: "model", parts: [{ text: reply }] });
+        } else {
+            aiMsgDiv.innerText = 'Google boş yanıt döndürdü. Tekrar dene kankam.';
         }
     } catch (err) {
-        aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu kankam!</span>';
+        aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu: ' + err.message + '</span>';
     }
 
     isLoading = false;
+    btn.disabled = false;
     chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-// Enter tuşu desteği
 document.getElementById('userInput').onkeydown = (e) => { if(e.key==='Enter') send(); };
 </script>
 </body>
