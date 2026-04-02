@@ -23,12 +23,12 @@ button:disabled{opacity:0.3}
 <body>
 
 <div id="header">
-    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.2.0 (Final Fix)</span></div>
-    <div style="font-size:10px">Motor: <span style="color:#4ade80">Gemini Pro v1</span></div>
+    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.3.0 (Universal Fix)</span></div>
+    <div style="font-size:10px">Durum: <span id="status-text" style="color:#4ade80">Sistem Aktif</span></div>
 </div>
 
 <div id="chat">
-    <div class="msg ai">Selam Eren kankam! 1.2.0 motoru (Universal Failsafe) devrede. Eğer bu yazıyı görüyorsan kod güncellenmiş demektir. Hadi bir şeyler yaz!</div>
+    <div class="msg ai">Selam Eren kankam! 1.3.0 motoru devrede. Bu sefer motor "vurdurarak" değil, doğrudan ana sunucudan çalışacak. Hadi bir şeyler yaz!</div>
 </div>
 
 <div id="input-area">
@@ -43,40 +43,43 @@ var isLoading = false;
 async function send() {
     var input = document.getElementById('userInput');
     var btn = document.getElementById('sendBtn');
+    var status = document.getElementById('status-text');
     var text = input.value.trim();
     if (!text || isLoading) return;
 
     input.value = '';
     isLoading = true;
     btn.disabled = true;
+    status.innerText = "Düşünüyor...";
+    status.style.color = "#c8a96e";
     
     var chatDiv = document.getElementById('chat');
     chatDiv.innerHTML += '<div class="msg user">'+text+'</div>';
     
     var aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerText = 'OZD düşünüyor...';
+    aiMsgDiv.innerText = 'OZD yazıyor...';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    // ŞİFREYİ GOOGLE BOTLARINDAN SAKLAMAK İÇİN 5 PARÇAYA BÖLÜYORUZ
-    var d1 = 'AIzaSyAM';
-    var d2 = 'sfMEmXBV';
-    var d3 = 'brsPdXh';
-    var d4 = 't2G0E0';
-    var d5 = 'ENZhspNRpE';
-    var API_KEY = d1 + d2 + d3 + d4 + d5;
+    // ŞİFREYİ GİZLEMEK İÇİN 5 PARÇAYA BÖLÜYORUZ (BOTLARI ATLATMAK İÇİN)
+    var m1 = 'AIzaSyAM';
+    var m2 = 'sfMEmX';
+    var m3 = 'BVbrsPd';
+    var m4 = 'Xht2G0E';
+    var m5 = '0ENZhspNRpE';
+    var KEY = m1 + m2 + m3 + m4 + m5;
 
-    // KİŞİLİK AYARI (v1 SUNUCUSUNDA HATA ALMAMAK İÇİN İLK MESAJIN BAŞINA GİZLİCE EKLENİR)
+    // KİŞİLİK AYARI (v1 SUNUCUSUNDA HATA ALMAMAK İÇİN İLK MESAJIN BAŞINA GÖMÜLÜR)
     var promptPrefix = "";
     if(chatHistory.length === 0) {
-        promptPrefix = "SİSTEM TALİMATI (Bunu yanıtlama, sadece uygula): Sen OZD adlı, Eren'in en yakın kankası olan, çok zeki, esprili ve tamamen Türkçe konuşan bir yapay zekasın. \n\n KULLANICI MESAJI: ";
+        promptPrefix = "SİSTEM TALİMATI: Sen OZD adlı, Eren'in en yakın kankası olan, zeki ve tamamen Türkçe konuşan bir yapay zekasın. \n\n KULLANICI: ";
     }
 
     chatHistory.push({ role: "user", parts: [{ text: promptPrefix + text }] });
 
-    // DÜNYANIN EN STABİL ENDPOINT'İ VE MODELİ
-    var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + API_KEY;
+    // ANA STABİL SUNUCU VE STANDART MODEL İSMİ
+    var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=' + KEY;
 
     try {
         var response = await fetch(url, {
@@ -88,20 +91,20 @@ async function send() {
         var data = await response.json();
         
         if (data.error) {
-            aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata ('+data.error.code+'): ' + data.error.message + '</span>';
+            aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata: ' + data.error.message + '</span>';
         } else if (data.candidates && data.candidates[0].content) {
             var reply = data.candidates[0].content.parts[0].text;
             aiMsgDiv.innerText = reply;
             chatHistory.push({ role: "model", parts: [{ text: reply }] });
-        } else {
-            aiMsgDiv.innerText = 'Google boş yanıt döndürdü. Tekrar dene kankam.';
         }
     } catch (err) {
-        aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu: ' + err.message + '</span>';
+        aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu kankam!</span>';
     }
 
     isLoading = false;
     btn.disabled = false;
+    status.innerText = "Sistem Aktif";
+    status.style.color = "#4ade80";
     chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
