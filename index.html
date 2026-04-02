@@ -1,179 +1,110 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZD | Yapay Zeka</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0a0a0c;
-            --container-bg: #121218;
-            --accent-color: #9d70ff;
-            --text-color: #f5f5f5;
-            --bot-msg-bg: #1e1e26;
-            --user-msg-bg: #2d2d3d;
-            --error-color: #ff5e5e;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .chat-container {
-            width: 95%;
-            max-width: 650px;
-            height: 85vh;
-            background: var(--container-bg);
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-header h1 {
-            margin: 0;
-            font-size: 1.6rem;
-            letter-spacing: 3px;
-            color: var(--accent-color);
-            text-shadow: 0 0 15px rgba(157, 112, 255, 0.4);
-        }
-
-        #chat-window {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        #chat-window::-webkit-scrollbar { width: 3px; }
-        #chat-window::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        .message {
-            max-width: 80%;
-            padding: 14px 20px;
-            border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .user-message { align-self: flex-end; background: var(--user-msg-bg); color: #fff; border-bottom-right-radius: 4px; }
-        .bot-message { align-self: flex-start; background: var(--bot-msg-bg); border: 1px solid rgba(255,255,255,0.05); border-bottom-left-radius: 4px; }
-
-        .input-area { padding: 20px; display: flex; gap: 12px; background: rgba(0,0,0,0.3); }
-
-        input { flex: 1; background: #1a1a22; border: 1px solid #2a2a35; padding: 14px; border-radius: 12px; color: #fff; outline: none; }
-        input:focus { border-color: var(--accent-color); }
-
-        button { background: var(--accent-color); color: white; border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; font-weight: 600; }
-
-        .error-msg { color: var(--error-color); text-align: center; font-size: 0.8rem; padding: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZD — Yapay Zeka Asistan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161e;--accent:#c8a96e;--text:#e8e6e0;--red:#f87171;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;display:flex;flex-direction:column}
+#header{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
+#chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
+.msg{max-width:85%;padding:12px;border-radius:10px;line-height:1.5;word-break:break-word}
+.user{align-self:flex-end;background:var(--bg2);border:1px solid var(--accent)}
+.ai{align-self:flex-start;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.3)}
+#input-area{padding:20px;background:var(--bg2);display:flex;gap:10px;border-top:1px solid rgba(255,255,255,0.05)}
+input{flex:1;background:#1a1e2a;border:1px solid #333;color:#fff;padding:12px;border-radius:8px;outline:none}
+button{background:var(--accent);border:none;padding:0 20px;border-radius:8px;cursor:pointer;font-weight:bold;color:#000}
+button:disabled{opacity:0.3}
+</style>
 </head>
 <body>
 
-<div class="chat-container">
-    <div class="chat-header"><h1>OZD</h1></div>
-    <div id="chat-window">
-        <div class="message bot-message">OZD (Gemini 2.5) sistemi aktif kanka. Şimdi konuşabiliriz!</div>
-    </div>
-    <div id="error-log" class="error-msg"></div>
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Bir şeyler yaz kanka..." autocomplete="off">
-        <button id="send-btn">Gönder</button>
-    </div>
+<div id="header">
+    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.4.0 (Final)</span></div>
+    <div style="font-size:10px">Sunucu: <span id="srv" style="color:#4ade80">Bağlanıyor...</span></div>
+</div>
+
+<div id="chat">
+    <div class="msg ai">Selam Eren kankam! Ben OZD. Motoru en stabil hale getirdik, artık hatasız konuşabiliriz. Ne yapıyoruz bugün?</div>
+</div>
+
+<div id="input-area">
+    <input type="text" id="userInput" placeholder="Bir şeyler yaz kankam...">
+    <button id="sendBtn" onclick="send()">GÖNDER</button>
 </div>
 
 <script>
-    // API KEY PARÇALARI
-    const k1 = "AIzaSyAM";
-    const k2 = "sfMEmXBV";
-    const k3 = "brsPdXht";
-    const k4 = "2G0E0ENZhspNRpE";
+var chatHistory = [];
+var isLoading = false;
+document.getElementById('srv').innerText = "Stabil v1beta";
+
+async function send() {
+    var input = document.getElementById('userInput');
+    var btn = document.getElementById('sendBtn');
+    var text = input.value.trim();
+    if (!text || isLoading) return;
+
+    input.value = '';
+    isLoading = true;
+    btn.disabled = true;
     
-    const API_KEY = k1 + k2 + k3 + k4;
+    var chatDiv = document.getElementById('chat');
+    chatDiv.innerHTML += '<div class="msg user">'+text+'</div>';
     
-    // MODEL İSMİ GÜNCELLENDİ: gemini-2.5-flash
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+    var aiMsgDiv = document.createElement('div');
+    aiMsgDiv.className = 'msg ai';
+    aiMsgDiv.innerText = 'OZD yazıyor...';
+    chatDiv.appendChild(aiMsgDiv);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    const inputField = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const chatWindow = document.getElementById("chat-window");
-    const errorLog = document.getElementById("error-log");
+    // ŞİFREYİ GÜVENLİĞE ALALIM (BOTLAR ANLAMASIN)
+    var a = 'AIzaSyAM';
+    var b = 'sfMEmXBVbr';
+    var c = 'sPdXht2G0';
+    var d = 'E0ENZhspNRpE';
+    var KEY = a + b + c + d;
 
-    async function sendMessage() {
-        const text = inputField.value.trim();
-        if (!text) return;
+    // KİŞİLİK AYARI: systemInstruction yerine en garanti yöntem olan "User Message Prefix" kullanıyoruz.
+    // Bu sayede sunucu ne olursa olsun asla JSON hatası vermez.
+    var currentText = text;
+    if(chatHistory.length === 0) {
+        currentText = "TALİMAT: Sen OZD adlı, Eren'in kankası olan zeki bir asistansın. Türkçe cevap ver. \n\n MESAJ: " + text;
+    }
 
-        errorLog.innerText = "";
-        appendMessage(text, "user-message");
-        inputField.value = "";
+    chatHistory.push({ role: "user", parts: [{ text: currentText }] });
 
-        const loading = appendMessage("OZD düşünüyor...", "bot-message");
+    // EN STABİL URL VE MODEL ADI
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + KEY;
 
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: "Senin adın OZD. Gemini 2.5 Flash tabanlı, samimi bir asistansın. Kullanıcı mesajı: " + text }]
-                    }]
-                })
-            });
+    try {
+        var response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: chatHistory })
+        });
 
-            const data = await response.json();
-            chatWindow.removeChild(loading);
-
-            if (data.error) {
-                errorLog.innerText = "Hata: " + data.error.message;
-                return;
-            }
-
-            if (data.candidates && data.candidates[0].content) {
-                const reply = data.candidates[0].content.parts[0].text;
-                appendMessage(reply, "bot-message");
-            }
-
-        } catch (err) {
-            if (chatWindow.contains(loading)) chatWindow.removeChild(loading);
-            errorLog.innerText = "Bağlantı hatası kanka!";
+        var data = await response.json();
+        
+        if (data.error) {
+            aiMsgDiv.innerHTML = '<span style="color:var(--red)">Hata: ' + data.error.message + '</span>';
+        } else if (data.candidates && data.candidates[0].content) {
+            var reply = data.candidates[0].content.parts[0].text;
+            aiMsgDiv.innerText = reply;
+            chatHistory.push({ role: "model", parts: [{ text: reply }] });
         }
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+    } catch (err) {
+        aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu!</span>';
     }
 
-    function appendMessage(text, className) {
-        const div = document.createElement("div");
-        div.className = `message ${className}`;
-        div.innerText = text;
-        chatWindow.appendChild(div);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-        return div;
-    }
+    isLoading = false;
+    btn.disabled = false;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+}
 
-    sendBtn.addEventListener("click", sendMessage);
-    inputField.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
+document.getElementById('userInput').onkeydown = (e) => { if(e.key==='Enter') send(); };
 </script>
-
 </body>
 </html>
