@@ -77,7 +77,7 @@ async function send() {
     chatHistory.push({ role: "user", parts: [{ text: currentText }] });
 
     // EN STABİL URL VE MODEL ADI
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + KEY;
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + KEY;
 
     try {
         var response = await fetch(url, {
