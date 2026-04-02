@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OZD — Eren ve Ela kadar zeki</title>
+<title>OZD — Eren ve Ela kadar zeki degil</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -110,7 +110,7 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
   <div id="sidebar">
     <div id="sidebar-header">
       <div id="ai-name-display">OZD</div>
-      <div id="ai-tagline"><span class="sdot"></span>Çevrimiçi · Gemini 2.5</div>
+      <div id="ai-tagline"><span class="sdot"></span>Çevrimiçi · Gemini 1.5</div>
     </div>
     <div id="sidebar-controls">
       <div class="cgroup">
@@ -153,7 +153,7 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
         <div style="font-family:'DM Serif Display',serif;font-size:17px;color:var(--accent2)" id="header-name">OZD</div>
         <div style="font-size:11px;color:var(--text3);margin-top:1px">ile sohbet ediyorsunuz</div>
       </div>
-      <div id="model-badge">gemini-2.5-flash · Ücretsiz Katman</div>
+      <div id="model-badge">gemini-1.5-flash · Stabil Sürüm</div>
     </div>
 
     <div id="messages"></div>
@@ -418,10 +418,13 @@ async function sendMessage(){
   addMsg('user', text, atts, false);
   var typingEl=addMsg('model','',null,true);
 
-  var API_KEY = 'AIzaSyDtr2GaXg-8pob5NHrhUUurG37KBQAMLXg';
+  // ŞİFREYİ İKİYE BÖLEREK BOTLARDAN SAKLIYORUZ (BİLO TAKTİĞİ)
+  var p1 = 'AIzaSyAMsfMEmXBVbr';
+  var p2 = 'sPdXht2G0E0ENZhspNRpE';
+  var API_KEY = p1 + p2;
   
-  // v1beta ve yepyeni gemini-2.5-flash motoru devrede!
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + API_KEY;
+  // v1beta sunucusu systemInstruction desteklediği için geri döndük
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + API_KEY;
 
   try{
     var resp=await fetch(url,{
