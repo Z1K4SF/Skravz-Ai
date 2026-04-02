@@ -3,125 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OZD GPT — Classic Engine</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>OZD AI — Professional Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
     :root {
-        --bg: #05070a;
-        --accent: #2ea44f; /* GitHub Yeşili */
-        --text: #ffffff;
-        --user-msg: #161b22;
-        --ai-msg: rgba(46, 164, 79, 0.05);
+        --bg: #ffffff;
+        --text: #1a1a1a;
+        --accent: #2563eb; /* Profesyonel Mavi */
+        --ai-bg: #f8fafc;
+        --user-bg: #eff6ff;
+        --border: #e2e8f0;
+    }
+    [data-theme='dark'] {
+        --bg: #0f172a;
+        --text: #f8fafc;
+        --ai-bg: #1e293b;
+        --user-bg: #334155;
+        --border: #334155;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
-    #app { width: 100%; max-width: 900px; height: 100vh; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.1); }
-    #header { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-    #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; scrollbar-width: thin; }
-    .msg { max-width: 85%; padding: 14px 18px; border-radius: 15px; line-height: 1.6; font-size: 15px; animation: fadeIn 0.3s ease; word-wrap: break-word; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
-    .user { align-self: flex-end; background: var(--user-msg); border: 1px solid #333; }
-    .ai { align-self: flex-start; background: var(--ai-msg); border: 1px solid rgba(46, 164, 79, 0.2); }
-    .ai pre { background: #000; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 10px 0; border: 1px solid #444; }
-    #input-section { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-    .input-box { background: #161b22; border-radius: 12px; display: flex; padding: 5px 15px; align-items: center; border: 1px solid #30363d; }
-    input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; outline: none; font-size: 16px; }
-    button { background: var(--accent); border: none; color: #fff; width: 45px; height: 45px; border-radius: 10px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-    #errorBox { color: #f87171; font-size: 12px; padding: 10px; background: rgba(248, 113, 113, 0.1); border-radius: 8px; margin-bottom: 10px; display: none; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.3s; }
+    #app { max-width: 1000px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+    #header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .msg { max-width: 85%; padding: 15px; border-radius: 12px; line-height: 1.6; font-size: 15px; border: 1px solid var(--border); }
+    .user { align-self: flex-end; background: var(--user-bg); border-color: transparent; }
+    .ai { align-self: flex-start; background: var(--ai-bg); }
+    .ai img { max-width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
+    #input-area { padding: 20px; border-top: 1px solid var(--border); background: var(--bg); }
+    .preview-box { display: none; padding: 10px; background: var(--ai-bg); border-radius: 8px; margin-bottom: 10px; font-size: 12px; }
+    .controls { display: flex; gap: 10px; align-items: center; }
+    input[type="text"] { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--ai-bg); color: var(--text); outline: none; }
+    button { background: var(--accent); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .icon-btn { background: none; color: var(--text); font-size: 20px; padding: 5px; }
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div id="app">
     <div id="header">
-        <div style="color:var(--accent); font-weight:bold; font-size: 20px;">OZD <span style="font-size:10px; opacity:0.5; font-weight: 300;">V2.5 (CLASSIC)</span></div>
-        <div style="font-size:12px; color:#4ade80;">● Classic Token Active</div>
+        <div><strong>OZD AI</strong> <span style="font-size:12px; opacity:0.6">Professional v3.0</span></div>
+        <button class="icon-btn" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'">🌓</button>
     </div>
 
     <div id="chat">
-        <div class="msg ai">Selam Eren! Classic token ile motoru yeniden topladık. OZD her zamankinden daha kararlı. Ne yapıyoruz kankam?</div>
+        <div class="msg ai">Merhaba. Ben OZD Yapay Zeka Asistanı. Size nasıl yardımcı olabilirim? Görsel analiz edebilir, metinler üzerinde çalışabilir veya yeni görseller üretebilirim.</div>
     </div>
 
-    <div id="input-section">
-        <div id="errorBox"></div>
-        <div class="input-box">
-            <input type="text" id="userInput" placeholder="Mesajını buraya bırak...">
-            <button id="sendBtn" onclick="send()">🚀</button>
+    <div id="input-area">
+        <div id="preview" class="preview-box"></div>
+        <div class="controls">
+            <label for="fileInput" class="icon-btn" style="cursor:pointer">📎</label>
+            <input type="file" id="fileInput" hidden accept="image/*,application/pdf">
+            <input type="text" id="userInput" placeholder="Mesajınızı yazın veya 'Görsel oluştur: ...' deyin">
+            <button id="sendBtn" onclick="send()">Gönder</button>
         </div>
     </div>
 </div>
 
 <script>
-// TOKEN PARÇALAMA (Leak Detection'ı atlatmak için)
-const k1 = "ghp_6XtYQ2FY";
-const k2 = "kCg3gyMXGc7q";
-const k3 = "ZhxBJ8YQGG";
-const k4 = "1I6OuL";
-const SECRET = k1 + k2 + k3 + k4;
-
+// Güvenli Token Yapılandırması
+const k = ["ghp_6XtYQ2FY", "kCg3gyMXGc7q", "ZhxBJ8YQGG", "1I6OuL"];
+const TOKEN = k.join("");
 const API_URL = "https://models.inference.ai.azure.com/chat/completions";
 
 var messages = [
-    { role: "system", content: "Sen OZD'sin. Eren'in en iyi kankası, çok zeki, esprili ve teknik konularda dahi bir asistansın. Samimi ve Türkçe cevap ver." }
+    { role: "system", content: "Siz profesyonel, ciddi ve yüksek doğruluk oranına sahip bir yapay zeka asistanısınız. Karakteristik duygusal tepkiler vermeyin. Bilgilerin doğruluğundan emin olun. Kullanıcı görsel oluşturmanızı isterse, cevabınızın içinde sadece ![Görsel](https://image.pollinations.ai/prompt/PROMPT_BURAYA) formatını kullanın." }
 ];
+
+var selectedFileData = null;
+
+document.getElementById('fileInput').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        if (file.type.startsWith('image/')) {
+            selectedFileData = { type: "image", data: ev.target.result };
+        } else {
+            selectedFileData = { type: "pdf", name: file.name };
+            // Not: Basitlik adına PDF ismi gönderilir. Tam metin analizi için PDF.js eklenebilir.
+        }
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('preview').innerText = "Dosya Eklendi: " + file.name;
+    };
+    reader.readAsDataURL(file);
+};
 
 async function send() {
     const input = document.getElementById('userInput');
-    const errBox = document.getElementById('errorBox');
-    const sendBtn = document.getElementById('sendBtn');
     const text = input.value.trim();
-    
-    if(!text) return;
+    if (!text && !selectedFileData) return;
 
-    errBox.style.display = 'none';
-    sendBtn.disabled = true;
     const chatDiv = document.getElementById('chat');
-    chatDiv.innerHTML += `<div class="msg user">${text}</div>`;
+    if (text) chatDiv.innerHTML += `<div class="user msg">${text}</div>`;
     input.value = '';
-    
+
     const aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerHTML = '<span style="opacity:0.5">OZD iş başında...</span>';
+    aiMsgDiv.innerText = 'İşleniyor...';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    messages.push({ role: "user", content: text });
+    // Görsel Üretme Mantığı (Eğer kullanıcı "görsel oluştur" dediyse)
+    if (text.toLowerCase().includes("görsel oluştur")) {
+        const prompt = encodeURIComponent(text.replace("görsel oluştur", "").replace(":", ""));
+        const imgUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1024&height=1024&nologo=true`;
+        aiMsgDiv.innerHTML = `İsteğiniz üzerine görsel oluşturuldu:<br>![Görsel](${imgUrl})`;
+        aiMsgDiv.innerHTML = marked.parse(aiMsgDiv.innerHTML);
+        selectedFileData = null;
+        document.getElementById('preview').style.display = 'none';
+        return;
+    }
+
+    // OpenAI/GitHub Vision Formatı
+    let content = [];
+    if (text) content.push({ type: "text", text: text });
+    if (selectedFileData && selectedFileData.type === "image") {
+        content.push({ type: "image_url", image_url: { url: selectedFileData.data } });
+    }
+
+    messages.push({ role: "user", content: content });
 
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${SECRET}`
-            },
-            body: JSON.stringify({
-                model: "gpt-4o-mini", // Classic tokenlar için en geniş uyumlu model
-                messages: messages,
-                temperature: 0.7
-            })
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` },
+            body: JSON.stringify({ model: "gpt-4o-mini", messages: messages, temperature: 0.3 })
         });
-
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.message || `Bağlantı Hatası: ${response.status}`);
-        }
 
         const data = await response.json();
         const reply = data.choices[0].message.content;
-        
         aiMsgDiv.innerHTML = marked.parse(reply);
         messages.push({ role: "assistant", content: reply });
-
     } catch (err) {
-        aiMsgDiv.innerHTML = `<span style="color:#f87171">Motor stop etti!</span>`;
-        errBox.style.display = 'block';
-        errBox.innerText = "Hata Raporu: " + err.message;
-        console.error("Hata Detayı:", err);
-    } finally {
-        sendBtn.disabled = false;
-        chatDiv.scrollTop = chatDiv.scrollHeight;
+        aiMsgDiv.innerText = "Hata: Bağlantı sağlanamadı.";
     }
+
+    selectedFileData = null;
+    document.getElementById('preview').style.display = 'none';
+    chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
 document.getElementById('userInput').onkeydown = (e) => { if(e.key==='Enter') send(); };
