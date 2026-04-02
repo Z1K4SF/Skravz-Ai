@@ -3,200 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OZD GPT — GitHub Models Edition</title>
+<title>OZD GPT — Debug Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-:root {
-    --bg: #05070a;
-    --card: #0d1117;
-    --accent: #2ea44f; /* GitHub Yeşili */
-    --accent-glow: rgba(46, 164, 79, 0.2);
-    --text: #ffffff;
-    --text-dim: #9ca3af;
-    --user-msg: #161b22;
-    --ai-msg: rgba(46, 164, 79, 0.05);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-}
-
-#app {
-    width: 100%;
-    max-width: 1000px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid rgba(255,255,255,0.05);
-    border-right: 1px solid rgba(255,255,255,0.05);
-    background: linear-gradient(180deg, rgba(13,17,23,0) 0%, rgba(13,17,23,1) 100%);
-}
-
-#header {
-    padding: 20px 30px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(10px);
-}
-
-.brand { font-size: 24px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 10px; }
-.brand span { font-size: 10px; color: var(--text-dim); border: 1px solid var(--text-dim); padding: 2px 6px; border-radius: 4px; }
-
-#chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-.msg {
-    max-width: 85%;
-    padding: 16px 20px;
-    border-radius: 20px;
-    line-height: 1.7;
-    font-size: 15px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-.user { align-self: flex-end; background: var(--user-msg); border: 1px solid rgba(255,255,255,0.1); }
-.ai { align-self: flex-start; background: var(--ai-msg); border: 1px solid var(--accent-glow); color: #e5e7eb; }
-
-/* Markdown İçin Kod Blokları */
-.ai pre { background: #000; padding: 15px; border-radius: 10px; overflow-x: auto; margin: 10px 0; border: 1px solid #333; }
-.ai code { color: var(--accent); font-family: monospace; }
-
-#input-section {
-    padding: 30px;
-    background: rgba(13, 17, 23, 0.8);
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.input-box {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    padding: 5px 15px;
-}
-
-.input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-
-input[type="text"] {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: #fff;
-    padding: 15px;
-    outline: none;
-    font-size: 16px;
-}
-
-#sendBtn {
-    background: var(--accent);
-    color: #fff;
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-#file-preview {
-    display: none;
-    margin-bottom: 10px;
-    padding: 10px;
-    background: rgba(46, 164, 79, 0.1);
-    border-radius: 10px;
-    font-size: 12px;
-    color: var(--accent);
-}
+    :root {
+        --bg: #05070a;
+        --accent: #2ea44f;
+        --text: #ffffff;
+        --user-msg: #161b22;
+        --ai-msg: rgba(46, 164, 79, 0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
+    #app { width: 100%; max-width: 900px; height: 100vh; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.05); }
+    #header { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+    #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .msg { max-width: 85%; padding: 14px 18px; border-radius: 15px; line-height: 1.6; font-size: 15px; }
+    .user { align-self: flex-end; background: var(--user-msg); border: 1px solid #333; }
+    .ai { align-self: flex-start; background: var(--ai-msg); border: 1px solid rgba(46, 164, 79, 0.2); }
+    #input-section { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .input-box { background: #161b22; border-radius: 12px; display: flex; padding: 5px 15px; align-items: center; border: 1px solid #30363d; }
+    input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px; outline: none; }
+    button { background: var(--accent); border: none; color: #fff; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; }
+    .error-log { color: #f87171; font-size: 12px; padding: 5px; background: rgba(248, 113, 113, 0.1); border-radius: 5px; margin-top: 5px; display: none; }
 </style>
 </head>
 <body>
 
 <div id="app">
     <div id="header">
-        <div class="brand">OZD <span>GITHUB MODELS</span></div>
-        <div style="font-size: 12px; color: #4ade80;">● GPT-4o Online</div>
+        <div style="color:var(--accent); font-weight:bold;">OZD <span style="font-size:10px; opacity:0.5;">v2.3</span></div>
+        <div id="status" style="font-size:12px; color:#4ade80;">GitHub Engine</div>
     </div>
 
     <div id="chat">
-        <div class="msg ai">Selam Eren! GitHub anahtarınla bağlandım. Artık çok daha keskin zekalıyım ve her türlü kodu çatır çatır yazarım. Başlayalım mı?</div>
+        <div class="msg ai">Selam Eren kankam! Bağlantıyı kontrol ettim, hadi bir şeyler yaz da motoru test edelim.</div>
     </div>
 
     <div id="input-section">
-        <div id="file-preview"></div>
+        <div id="errorBox" class="error-log"></div>
         <div class="input-box">
-            <label for="fileInput" style="cursor:pointer; padding:10px; color:var(--text-dim)">📎</label>
-            <input type="file" id="fileInput" hidden accept="image/*">
-            <input type="text" id="userInput" placeholder="OZD'ye bir şeyler sor kankam...">
-            <button id="sendBtn" onclick="send()">🚀</button>
+            <input type="text" id="userInput" placeholder="Mesajını yaz...">
+            <button onclick="send()">🚀</button>
         </div>
     </div>
 </div>
 
 <script>
-// Senin verdiğin Key buraya işlendi
 const GITHUB_TOKEN = "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";
-// GitHub Models Inference URL
+// GitHub Models için en garanti endpoint
 const API_URL = "https://models.inference.ai.azure.com/chat/completions";
 
 var messages = [
-    { role: "system", content: "Sen OZD'sin. Eren'in en iyi kankası, çok zeki, esprili ve teknik konularda dahi bir asistansın. Samimi ve Türkçe cevap ver." }
+    { role: "system", content: "Sen OZD'sin. Eren'in kankası, zeki ve samimi bir asistansın." }
 ];
-var selectedFileBase64 = null;
-
-document.getElementById('fileInput').onchange = (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        selectedFileBase64 = ev.target.result;
-        document.getElementById('file-preview').style.display = 'block';
-        document.getElementById('file-preview').innerText = "Resim hazır: " + file.name;
-    };
-    reader.readAsDataURL(file);
-};
 
 async function send() {
     const input = document.getElementById('userInput');
+    const errBox = document.getElementById('errorBox');
     const text = input.value.trim();
-    if(!text && !selectedFileBase64) return;
+    if(!text) return;
 
+    errBox.style.display = 'none';
     const chatDiv = document.getElementById('chat');
-    if(text) chatDiv.innerHTML += `<div class="msg user">${text}</div>`;
+    chatDiv.innerHTML += `<div class="msg user">${text}</div>`;
     input.value = '';
     
     const aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerHTML = '<span style="opacity:0.5">OZD veriyi işliyor...</span>';
+    aiMsgDiv.innerText = 'Düşünüyorum...';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    // GitHub/OpenAI Formatında İçerik Oluşturma
-    let userContent = [];
-    if(text) userContent.push({ type: "text", text: text });
-    if(selectedFileBase64) {
-        userContent.push({ type: "image_url", image_url: { url: selectedFileBase64 } });
-    }
-
-    messages.push({ role: "user", content: userContent });
+    messages.push({ role: "user", content: text });
 
     try {
         const response = await fetch(API_URL, {
@@ -206,48 +86,32 @@ async function send() {
                 'Authorization': `Bearer ${GITHUB_TOKEN}`
             },
             body: JSON.stringify({
-                model: "gpt-4o", // GitHub Models üzerindeki model adı
+                // Bazı PAT'lerde gpt-4o kapalı olabilir, gpt-4o-mini daha garantidir
+                model: "gpt-4o-mini", 
                 messages: messages,
-                stream: true
+                temperature: 0.7,
+                max_tokens: 1000
             })
         });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullReply = "";
-        aiMsgDiv.innerHTML = "";
-
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
-            
-            for (const line of lines) {
-                const trimmed = line.trim();
-                if (trimmed === "data: [DONE]") break;
-                if (trimmed.startsWith("data: ")) {
-                    try {
-                        const data = JSON.parse(trimmed.substring(6));
-                        const content = data.choices[0].delta.content;
-                        if (content) {
-                            fullReply += content;
-                            // Markdown'u render et
-                            aiMsgDiv.innerHTML = marked.parse(fullReply);
-                            chatDiv.scrollTop = chatDiv.scrollHeight;
-                        }
-                    } catch (e) {}
-                }
-            }
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Sunucu hatası: " + response.status);
         }
-        messages.push({ role: "assistant", content: fullReply });
-    } catch (err) {
-        aiMsgDiv.innerHTML = `<span style="color:#f87171">Hata: Bağlantı kurulamadı. API Key'ini veya model ismini kontrol et kankam.</span>`;
-    }
 
-    selectedFileBase64 = null;
-    document.getElementById('file-preview').style.display = 'none';
+        const data = await response.json();
+        const reply = data.choices[0].message.content;
+        
+        aiMsgDiv.innerHTML = marked.parse(reply);
+        messages.push({ role: "assistant", content: reply });
+
+    } catch (err) {
+        aiMsgDiv.innerHTML = `<span style="color:#f87171">OZD bir sorunla karşılaştı.</span>`;
+        errBox.style.display = 'block';
+        errBox.innerText = "Detay: " + err.message;
+        console.error("Hata:", err);
+    }
+    chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
 document.getElementById('userInput').onkeydown = (e) => { if(e.key==='Enter') send(); };
