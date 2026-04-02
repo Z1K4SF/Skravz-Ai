@@ -14,69 +14,104 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 .msg{max-width:85%;padding:12px;border-radius:10px;line-height:1.5;word-break:break-word}
 .user{align-self:flex-end;background:var(--bg2);border:1px solid var(--accent)}
 .ai{align-self:flex-start;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.3)}
-#input-area{padding:20px;background:var(--bg2);display:flex;gap:10px;border-top:1px solid rgba(255,255,255,0.05)}
-input{flex:1;background:#1a1e2a;border:1px solid #333;color:#fff;padding:12px;border-radius:8px;outline:none}
-button{background:var(--accent);border:none;padding:0 20px;border-radius:8px;cursor:pointer;font-weight:bold;color:#000}
+#input-area{padding:20px;background:var(--bg2);display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(255,255,255,0.05)}
+.controls{display:flex;gap:10px;align-items:center}
+input[type="text"]{flex:1;background:#1a1e2a;border:1px solid #333;color:#fff;padding:12px;border-radius:8px;outline:none}
+#fileInput{display:none}
+.file-label{background:#1a1e2a;border:1px solid #333;padding:10px;border-radius:8px;cursor:pointer;color:var(--accent);font-size:20px}
+button{background:var(--accent);border:none;padding:0 20px;height:45px;border-radius:8px;cursor:pointer;font-weight:bold;color:#000}
 button:disabled{opacity:0.3}
+#preview{font-size:12px;color:var(--accent);display:none}
 </style>
 </head>
 <body>
 
 <div id="header">
-    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.4.0 (Final)</span></div>
+    <div><strong style="color:var(--accent)">OZD</strong> <span style="font-size:10px;opacity:0.5">Versiyon: 1.5.0 (Flash 2.5)</span></div>
     <div style="font-size:10px">Sunucu: <span id="srv" style="color:#4ade80">Bağlanıyor...</span></div>
 </div>
 
 <div id="chat">
-    <div class="msg ai">Selam Eren kankam! Ben OZD. Motoru en stabil hale getirdik, artık hatasız konuşabiliriz. Ne yapıyoruz bugün?</div>
+    <div class="msg ai">Selam Eren kankam! OZD v2.5-Flash motoruyla hazır. Ne yapıyoruz bugün?</div>
 </div>
 
 <div id="input-area">
-    <input type="text" id="userInput" placeholder="Bir şeyler yaz kankam...">
-    <button id="sendBtn" onclick="send()">GÖNDER</button>
+    <div id="preview">Seçilen dosya hazır!</div>
+    <div class="controls">
+        <label for="fileInput" class="file-label">📎</label>
+        <input type="file" id="fileInput" accept="image/*,application/pdf,video/*">
+        <input type="text" id="userInput" placeholder="Bir şeyler yaz kankam...">
+        <button id="sendBtn" onclick="send()">GÖNDER</button>
+    </div>
 </div>
 
 <script>
 var chatHistory = [];
 var isLoading = false;
-document.getElementById('srv').innerText = "Stabil v1beta";
+var selectedFileData = null;
+
+// Durum bilgisini güncelliyoruz
+document.getElementById('srv').innerText = "Stabil v1beta (Flash 2.5)";
+
+// Dosya seçme işlemi
+document.getElementById('fileInput').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const base64Data = event.target.result.split(',')[1];
+        selectedFileData = {
+            mimeType: file.type,
+            data: base64Data
+        };
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('preview').innerText = "Dosya eklendi: " + file.name;
+    };
+    reader.readAsDataURL(file);
+};
 
 async function send() {
     var input = document.getElementById('userInput');
     var btn = document.getElementById('sendBtn');
     var text = input.value.trim();
-    if (!text || isLoading) return;
+    
+    if ((!text && !selectedFileData) || isLoading) return;
 
     input.value = '';
     isLoading = true;
     btn.disabled = true;
     
     var chatDiv = document.getElementById('chat');
-    chatDiv.innerHTML += '<div class="msg user">'+text+'</div>';
+    chatDiv.innerHTML += '<div class="msg user">' + (text ? text : "Dosya gönderildi") + '</div>';
     
     var aiMsgDiv = document.createElement('div');
     aiMsgDiv.className = 'msg ai';
-    aiMsgDiv.innerText = 'OZD yazıyor...';
+    aiMsgDiv.innerText = 'OZD (2.5-Flash) yazıyor...';
     chatDiv.appendChild(aiMsgDiv);
     chatDiv.scrollTop = chatDiv.scrollHeight;
 
-    // ŞİFREYİ GÜVENLİĞE ALALIM (BOTLAR ANLAMASIN)
+    // API ANAHTARI PARÇALARI
     var a = 'AIzaSyAM';
     var b = 'sfMEmXBVbr';
     var c = 'sPdXht2G0';
     var d = 'E0ENZhspNRpE';
     var KEY = a + b + c + d;
 
-    // KİŞİLİK AYARI: systemInstruction yerine en garanti yöntem olan "User Message Prefix" kullanıyoruz.
-    // Bu sayede sunucu ne olursa olsun asla JSON hatası vermez.
-    var currentText = text;
+    let messageParts = [];
+    
+    // Kişilik Ayarı ve İlk Mesaj Kontrolü
+    let promptText = text;
     if(chatHistory.length === 0) {
-        currentText = "TALİMAT: Sen OZD adlı, Eren'in kankası olan zeki bir asistansın. Türkçe cevap ver. \n\n MESAJ: " + text;
+        promptText = "TALİMAT: Sen OZD adlı, Eren'in kankası olan zeki bir asistansın. Türkçe cevap ver. \n\n MESAJ: " + (text || "Dosyayı analiz et kankam.");
     }
+    
+    if(promptText) messageParts.push({ text: promptText });
+    if(selectedFileData) messageParts.push({ inlineData: selectedFileData });
 
-    chatHistory.push({ role: "user", parts: [{ text: currentText }] });
+    chatHistory.push({ role: "user", parts: messageParts });
 
-    // EN STABİL URL VE MODEL ADI
+    // MODEL ADI: gemini-2.5-flash OLARAK AYARLANDI
     var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + KEY;
 
     try {
@@ -99,6 +134,10 @@ async function send() {
         aiMsgDiv.innerHTML = '<span style="color:var(--red)">Bağlantı koptu!</span>';
     }
 
+    // Sıfırlama işlemleri
+    selectedFileData = null;
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
     isLoading = false;
     btn.disabled = false;
     chatDiv.scrollTop = chatDiv.scrollHeight;
