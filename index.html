@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SKRAVZ — Yapay Zeka Asistan</title>
+<title>OZD — Yapay Zeka Asistan</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -109,17 +109,17 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
 <div id="app">
   <div id="sidebar">
     <div id="sidebar-header">
-      <div id="ai-name-display">SKRAVZ</div>
+      <div id="ai-name-display">OZD</div>
       <div id="ai-tagline"><span class="sdot"></span>Çevrimiçi · Gemini 1.5</div>
     </div>
     <div id="sidebar-controls">
       <div class="cgroup">
         <span class="clabel">Yapay Zekanın Adı</span>
-        <input type="text" class="cinput" id="ai-name-input" value="SKRAVZ" placeholder="örn. ARIA, MAX, ZEN...">
+        <input type="text" class="cinput" id="ai-name-input" value="OZD" placeholder="örn. ARIA, MAX, ZEN...">
       </div>
       <div class="cgroup">
         <span class="clabel">Kişilik / Sistem Promptu</span>
-        <textarea class="cinput" id="system-prompt">Sen SKRAVZ adlı gelişmiş bir yapay zeka asistanısın. Türkçe olarak yardım edersin. Zeki, nazik ve meraklı bir kişiliğe sahipsin. Görselleri analiz edebilir, dosyaları okuyabilir ve her türlü soruya kapsamlı cevaplar verebilirsin.</textarea>
+        <textarea class="cinput" id="system-prompt">Sen OZD adlı gelişmiş bir yapay zeka asistanısın. Türkçe olarak yardım edersin. Zeki, nazik ve meraklı bir kişiliğe sahipsin. Görselleri analiz edebilir, dosyaları okuyabilir ve her türlü soruya kapsamlı cevaplar verebilirsin.</textarea>
       </div>
       <div class="cgroup">
         <span class="clabel">Yanıt Stili</span>
@@ -150,7 +150,7 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
   <div id="main">
     <div id="chat-header">
       <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:17px;color:var(--accent2)" id="header-name">SKRAVZ</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:17px;color:var(--accent2)" id="header-name">OZD</div>
         <div style="font-size:11px;color:var(--text3);margin-top:1px">ile sohbet ediyorsunuz</div>
       </div>
       <div id="model-badge">gemini-1.5-flash · Ücretsiz Katman</div>
@@ -160,7 +160,7 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
 
     <div id="welcome">
       <div id="welcome-icon">S</div>
-      <h2 id="welcome-title">Merhaba, ben SKRAVZ</h2>
+      <h2 id="welcome-title">Merhaba, ben OZD</h2>
       <p id="welcome-sub">Size nasıl yardımcı olabilirim? Görsel, PDF veya dosya da paylaşabilirsiniz.</p>
       <div class="chips">
         <div class="chip" onclick="sendChip(this.textContent)">Bir şey açıkla</div>
@@ -197,7 +197,7 @@ textarea.cinput{resize:vertical;min-height:90px;line-height:1.5}
 var messages=[];
 var pendingAtts=[];
 var isLoading=false;
-var aiName='SKRAVZ';
+var aiName='OZD';
 
 var messagesEl=document.getElementById('messages');
 var welcomeEl=document.getElementById('welcome');
@@ -227,7 +227,7 @@ inputEl.addEventListener('keydown',function(e){
 });
 
 document.getElementById('apply-btn').addEventListener('click',function(){
-  aiName=document.getElementById('ai-name-input').value.trim()||'SKRAVZ';
+  aiName=document.getElementById('ai-name-input').value.trim()||'OZD';
   document.getElementById('ai-name-display').textContent=aiName;
   document.getElementById('header-name').textContent=aiName;
   document.getElementById('welcome-title').textContent='Merhaba, ben '+aiName;
@@ -418,19 +418,33 @@ async function sendMessage(){
   addMsg('user', text, atts, false);
   var typingEl=addMsg('model','',null,true);
 
-  // ŞİFRE BURADA KANKAM! ELLERİMLE ÇAKTIM!
   var API_KEY = 'AIzaSyDtr2GaXg-8pob5NHrhUUurG37KBQAMLXg';
-  
-  // v1 Ana sunucu ve stabil model
   var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=' + API_KEY;
+
+  // ÇAKKAL BİLO TAKTİĞİ: systemInstruction sildik, onun yerine sistemi gizlice kullanıcı mesajına ekliyoruz.
+  var apiMessages = JSON.parse(JSON.stringify(messages)); 
+  var sysTxt = "[GİZLİ SİSTEM TALİMATI: " + getSysPrompt() + "]\n\n";
+  
+  var lastMsg = apiMessages[apiMessages.length - 1];
+  var hasText = false;
+  for(var i=0; i<lastMsg.parts.length; i++){
+      if(lastMsg.parts[i].text){
+          lastMsg.parts[i].text = sysTxt + lastMsg.parts[i].text;
+          hasText = true;
+          break;
+      }
+  }
+  if(!hasText){
+      lastMsg.parts.unshift({text: sysTxt});
+  }
 
   try{
     var resp=await fetch(url,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
+      // systemInstruction kısmını sildik, tertemiz oldu!
       body:JSON.stringify({
-        systemInstruction: { parts: [{ text: getSysPrompt() }] },
-        contents: messages
+        contents: apiMessages 
       })
     });
     var data=await resp.json();
