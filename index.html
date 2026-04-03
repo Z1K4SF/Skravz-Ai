@@ -1,35 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-<title>Elveda OZD ULTRA AKILLI YAPAY ZEKA</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  text-align: center;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elveda OZD | Bir Devrin Sonu</title>
+    <style>
+        /* Genel Arka Plan ve Font Ayarları */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Hüzünlü ve derin bir gradyan */
+            background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
+            color: #dcdcdc;
+            overflow: hidden;
+        }
 
-h1 {
-  color: #333;
-}
+        /* Ana Mesaj Kutusu */
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03); /* Çok hafif şeffaf kutu */
+            border-radius: 15px;
+            backdrop-filter: blur(5px); /* Arka planı hafifçe bulandırır */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* Belirme Animasyonu */
+            animation: fadeIn 3s ease-in-out;
+        }
 
-p {
-  color: #666;
-}
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
 
-.farewell-message {
-  margin-top: 50px;
-}
-</style>
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .highlight {
+            color: #bdc3c7;
+            font-style: italic;
+        }
+
+        .signature {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        /* Yavaşça belirme animasyonu tanımı */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ekran küçüldüğünde uyum sağla */
+        @media (max-width: 480px) {
+            .container { width: 90%; padding: 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="farewell-message">
-    <h1>Hoşça kal, OZD!</h1>
-    <p>Birlikte geçirdiğimiz çok kısa zamandaki güzel anılar ve paylaştığımız bilgiler için teşekkür ederiz.</p>
-    <p>Projemiz yetersiz kaynaklardan dolayı süresiz olarak askıya alınmıştır.</p>
-    <p>Artık vedalaşma vakti geldi.</p>
-    <p>Sizleri özleyeceğiz. Sevgilerle,</p>
-    <p>Yapımda ve yayımda emeği geçen sayın ALBAK'a saygı ve sevgilerimiz ile..</p>
-  </div>
+
+    <div class="container">
+        <h1>Hoşça kal, OZD</h1>
+        
+        <p>Birlikte geçirdiğimiz kısa ama anlamlı yolculukta paylaştığımız her bilgi için minnettarız.</p>
+        
+        <p class="highlight">Projemiz, yetersiz kaynaklar sebebiyle süresiz olarak karanlığa bürünmüştür.</p>
+        
+        <p>Her veda, yeni bir başlangıcın habercisidir; ancak bu sayfada ışıklar şimdilik sönüyor.</p>
+        
+        <div class="signature">
+            Sizleri özleyeceğiz. Sevgilerle...<br>
+            <strong>Yapımda ve yayımda emeği geçen Sayın ALBAK'a saygılarımızla.</strong>
+        </div>
+    </div>
+
 </body>
 </html>
