@@ -3,132 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZD | Premium Video Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>OZD | Ultra Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #050505;
-            --card-bg: #121212;
-            --accent: #00d2ff; /* Canlı mavi */
-            --text-main: #ffffff;
-            --text-dim: #a0a0a0;
+            --bg: #050505;
+            --surface: #111111;
+            --accent: #e50914; /* Netflix Kırmızısı tarzı veya #00d2ff yapabilirsin */
+            --text: #ffffff;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 0;
+            scroll-behavior: smooth;
         }
 
-        /* Başlık Alanı */
-        header {
-            padding: 60px 20px;
-            text-align: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+        /* Navigasyon */
+        nav {
+            padding: 20px 5%;
+            background: rgba(0,0,0,0.8);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
         }
 
-        header h1 {
-            font-size: 3.5rem;
+        nav h1 {
             margin: 0;
-            letter-spacing: 5px;
-            background: linear-gradient(to right, #00d2ff, #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--accent);
+            font-size: 2rem;
         }
 
-        header p {
-            color: var(--text-dim);
-            margin-top: 10px;
-            letter-spacing: 2px;
-        }
-
-        /* Video Izgarası (Grid) */
-        .container {
+        /* Grid Sistemi */
+        .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            padding: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 40px 5%;
         }
 
         /* Video Kartı */
-        .video-card {
-            background: var(--card-bg);
-            border-radius: 20px;
+        .card {
+            background: var(--surface);
+            border-radius: 8px;
             overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
             border: 1px solid #222;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .video-card:hover {
-            transform: scale(1.03);
+        .card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
         }
 
-        .video-card h2 {
-            font-size: 1rem;
-            padding: 15px 20px;
+        .card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+            background: #222;
+        }
+
+        .card-info {
+            padding: 12px;
+        }
+
+        .card-info h3 {
             margin: 0;
-            font-weight: 500;
-            background: #181818;
-            color: var(--text-dim);
+            font-size: 0.9rem;
+            color: #ccc;
         }
 
-        .video-card:hover h2 {
-            color: var(--accent);
-        }
-
+        /* Video Oynatıcı Alanı */
         video {
             width: 100%;
+            display: none; /* Başlangıçta gizli, tıklandığında açılacak */
+            aspect-ratio: 16/9;
+        }
+
+        .playing video {
             display: block;
-            aspect-ratio: 16 / 9;
-            background: #000;
+        }
+        
+        .playing img {
+            display: none;
         }
 
         footer {
             text-align: center;
-            padding: 50px;
-            color: #333;
+            padding: 60px;
+            color: #444;
             border-top: 1px solid #111;
         }
     </style>
 </head>
 <body>
 
-    <header>
+    <nav>
         <h1>OZD</h1>
-        <p>PREMIUM ARCHIVE</p>
-    </header>
+        <div style="font-size: 0.8rem; color: #666;">50 ÖZEL İÇERİK</div>
+    </nav>
 
-    <div class="container" id="gallery">
+    <div class="video-grid" id="main-grid">
         </div>
 
     <footer>
-        OZD &copy; 2026 | Digital Content Gallery
+        OZD PREMIUM &copy; 2026
     </footer>
 
     <script>
-        const gallery = document.getElementById('gallery');
-        const totalVideos = 50; // Sayıyı 40'a çıkardık
+        const grid = document.getElementById('main-grid');
+        const total = 50;
 
-        for (let i = 1; i <= totalVideos; i++) {
+        for (let i = 1; i <= total; i++) {
             const card = document.createElement('div');
-            card.className = 'video-card';
+            card.className = 'card';
             
+            // Hız için: Videoları hemen yüklemek yerine sadece tıklandığında yükleyen yapı
             card.innerHTML = `
-                <h2>Video ${i.toString().padStart(2, '0')}</h2>
-                <video controls preload="metadata">
-                    <source src="video${i}.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <div class="thumb-container" onclick="playVideo(this, ${i})">
+                    <img src="https://via.placeholder.com/400x225/111/fff?text=Bölüm+${i}" alt="Bölüm ${i}">
+                    <div id="video-placeholder-${i}"></div>
+                </div>
+                <div class="card-info">
+                    <h3>Bölüm ${i.toString().padStart(2, '0')}</h3>
+                </div>
             `;
+            grid.appendChild(card);
+        }
+
+        function playVideo(container, id) {
+            const placeholder = document.getElementById(`video-placeholder-${id}`);
             
-            gallery.appendChild(card);
+            // Eğer video zaten eklenmemişse ekle (Lazy Load)
+            if (!placeholder.innerHTML) {
+                placeholder.innerHTML = `
+                    <video controls autoplay>
+                        <source src="video${id}.mp4" type="video/mp4">
+                    </video>
+                `;
+                container.classList.add('playing');
+                container.querySelector('img').style.display = 'none';
+            }
         }
     </script>
 
