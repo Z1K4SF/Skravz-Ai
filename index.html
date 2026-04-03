@@ -3,89 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZD | Ölümcül Sözleşme</title>
+    <title>OZD | Premium Video Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Genel Stil Ayarları */
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent-color: #38bdf8;
+            --bg-dark: #050505;
+            --card-bg: #121212;
+            --accent: #00d2ff; /* Canlı mavi */
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
+        /* Başlık Alanı */
         header {
-            width: 100%;
-            padding: 2rem 0;
+            padding: 60px 20px;
             text-align: center;
-            background: linear-gradient(to bottom, #1e293b, #0f172a);
-            border-bottom: 1px solid #334155;
-            margin-bottom: 30px;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
         }
 
         header h1 {
+            font-size: 3.5rem;
             margin: 0;
-            font-size: 2.5rem;
+            letter-spacing: 5px;
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--text-dim);
+            margin-top: 10px;
             letter-spacing: 2px;
-            color: var(--accent-color);
         }
 
-        /* Video Listesi Konteynırı */
+        /* Video Izgarası (Grid) */
         .container {
-            width: 90%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            padding-bottom: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Her Bir Video Kartı */
+        /* Video Kartı */
         .video-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
+            border: 1px solid #222;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .video-card:hover {
-            transform: translateY(-5px);
+            transform: scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
         }
 
-        .video-info {
+        .video-card h2 {
+            font-size: 1rem;
             padding: 15px 20px;
-            border-bottom: 1px solid #334155;
+            margin: 0;
+            font-weight: 500;
+            background: #181818;
+            color: var(--text-dim);
         }
 
-        .video-info h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--text-color);
+        .video-card:hover h2 {
+            color: var(--accent);
         }
 
         video {
             width: 100%;
             display: block;
-            outline: none;
+            aspect-ratio: 16 / 9;
+            background: #000;
         }
 
-        /* Alt Bilgi */
         footer {
-            padding: 20px;
-            font-size: 0.9rem;
-            color: #64748b;
+            text-align: center;
+            padding: 50px;
+            color: #333;
+            border-top: 1px solid #111;
         }
     </style>
 </head>
@@ -93,38 +102,33 @@
 
     <header>
         <h1>OZD</h1>
-        <p>Video Arşivi</p>
+        <p>PREMIUM ARCHIVE</p>
     </header>
 
-    <div class="container" id="video-listesi">
+    <div class="container" id="gallery">
         </div>
 
     <footer>
-        &copy; 2026 OZD - Tüm Hakları Saklıdır.
+        OZD &copy; 2026 | Digital Content Gallery
     </footer>
 
     <script>
-        // 20 videoyu otomatik olarak oluşturma döngüsü
-        const liste = document.getElementById('video-listesi');
-        const toplamVideo = 40;
+        const gallery = document.getElementById('gallery');
+        const totalVideos = 40; // Sayıyı 40'a çıkardık
 
-        for (let i = 1; i <= toplamVideo; i++) {
-            // Kart oluşturma
-            const kart = document.createElement('div');
-            kart.className = 'video-card';
-
-            // İçerik oluşturma (videoX.mp4 formatında)
-            kart.innerHTML = `
-                <div class="video-info">
-                    <h2>Video ${i}</h2>
-                </div>
+        for (let i = 1; i <= totalVideos; i++) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            
+            card.innerHTML = `
+                <h2>Video ${i.toString().padStart(2, '0')}</h2>
                 <video controls preload="metadata">
                     <source src="video${i}.mp4" type="video/mp4">
-                    Tarayıcınız bu videoyu desteklemiyor.
+                    Your browser does not support the video tag.
                 </video>
             `;
-
-            liste.appendChild(kart);
+            
+            gallery.appendChild(card);
         }
     </script>
 
