@@ -1,164 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZD | Ultra Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #050505;
-            --surface: #111111;
-            --accent: #e50914; /* Netflix Kırmızısı tarzı veya #00d2ff yapabilirsin */
-            --text: #ffffff;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-        }
-
-        /* Navigasyon */
-        nav {
-            padding: 20px 5%;
-            background: rgba(0,0,0,0.8);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-        }
-
-        nav h1 {
-            margin: 0;
-            letter-spacing: 4px;
-            color: var(--accent);
-            font-size: 2rem;
-        }
-
-        /* Grid Sistemi */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 40px 5%;
-        }
-
-        /* Video Kartı */
-        .card {
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #222;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border-color: var(--accent);
-        }
-
-        .card img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-            display: block;
-            background: #222;
-        }
-
-        .card-info {
-            padding: 12px;
-        }
-
-        .card-info h3 {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-
-        /* Video Oynatıcı Alanı */
-        video {
-            width: 100%;
-            display: none; /* Başlangıçta gizli, tıklandığında açılacak */
-            aspect-ratio: 16/9;
-        }
-
-        .playing video {
-            display: block;
-        }
-        
-        .playing img {
-            display: none;
-        }
-
-        footer {
-            text-align: center;
-            padding: 60px;
-            color: #444;
-            border-top: 1px solid #111;
-        }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <h1>OZD</h1>
-        <div style="font-size: 0.8rem; color: #666;">50 ÖZEL İÇERİK</div>
-    </nav>
-
-    <div class="video-grid" id="main-grid">
-        </div>
-
-    <footer>
-        OZD PREMIUM &copy; 2026
-    </footer>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BestLOL - Anında İzle, Hemen Yükle. Film Keyfi Sınırsız. Binlerce film arasından dilediğini yüksek kalitede izle." />
+    <title>BestLOL - Anında İzle, Hemen Yükle</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
-        const grid = document.getElementById('main-grid');
-        const total = 50;
-
-        for (let i = 1; i <= total; i++) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            // Hız için: Videoları hemen yüklemek yerine sadece tıklandığında yükleyen yapı
-            card.innerHTML = `
-                <div class="thumb-container" onclick="playVideo(this, ${i})">
-                    <img src="https://via.placeholder.com/400x225/111/fff?text=Bölüm+${i}" alt="Bölüm ${i}">
-                    <div id="video-placeholder-${i}"></div>
-                </div>
-                <div class="card-info">
-                    <h3>Bölüm ${i.toString().padStart(2, '0')}</h3>
-                </div>
-            `;
-            grid.appendChild(card);
-        }
-
-        function playVideo(container, id) {
-            const placeholder = document.getElementById(`video-placeholder-${id}`);
-            
-            // Eğer video zaten eklenmemişse ekle (Lazy Load)
-            if (!placeholder.innerHTML) {
-                placeholder.innerHTML = `
-                    <video controls autoplay>
-                        <source src="video${id}.mp4" type="video/mp4">
-                    </video>
-                `;
-                container.classList.add('playing');
-                container.querySelector('img').style.display = 'none';
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        'brand-bg': '#0f172a', /* Koyu arka plan */
+                        'brand-accent': '#3b82f6', /* Vurgu rengi (Mavi) */
+                        'brand-dark': '#1e293b'
+                    }
+                }
             }
         }
     </script>
+</head>
+<body class="min-h-screen bg-brand-bg text-white overflow-x-hidden font-sans">
+
+    <header class="w-full p-6 flex justify-between items-center border-b border-white/10">
+        <div class="text-2xl font-bold text-brand-accent tracking-wider">BestLOL</div>
+        <nav>
+            <ul class="flex space-x-6 text-sm font-medium text-gray-300">
+                <li><a href="#hero" class="hover:text-white transition-colors">Ana Sayfa</a></li>
+                <li><a href="#features" class="hover:text-white transition-colors">Özellikler</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="flex flex-col items-center justify-center text-center py-24 px-4">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                Anında İzle, <span class="text-brand-accent">Hemen Yükle</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-10">
+                Film Keyfi Sınırsız. Binlerce film arasından dilediğini yüksek kalitede izle veya cihazına indir.
+            </p>
+            <div class="flex space-x-4">
+                <button class="bg-brand-accent hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300">
+                    Hemen Başla
+                </button>
+                <button class="bg-brand-dark hover:bg-gray-800 border border-white/10 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300">
+                    Kataloğu İncele
+                </button>
+            </div>
+        </section>
+
+        <section id="features" class="py-20 bg-brand-dark/50 border-t border-white/5">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-12">Neden BestLOL?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <div class="p-6 rounded-xl bg-brand-dark border border-white/5 hover:border-brand-accent/30 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-full bg-brand-accent/10 flex items-center justify-center mx-auto mb-4 text-brand-accent text-2xl">⚡</div>
+                        <h3 class="text-xl font-semibold mb-2">Hızlı Yükleme</h3>
+                        <p class="text-gray-400 text-sm">Beklemek yok. Altyapımız sayesinde filmleriniz saniyeler içinde başlar.</p>
+                    </div>
+
+                    <div class="p-6 rounded-xl bg-brand-dark border border-white/5 hover:border-brand-accent/30 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-full bg-brand-accent/10 flex items-center justify-center mx-auto mb-4 text-brand-accent text-2xl">🎬</div>
+                        <h3 class="text-xl font-semibold mb-2">Geniş Arşiv</h3>
+                        <p class="text-gray-400 text-sm">Binlerce yerli ve yabancı film, dizi, belgesel tek bir tık uzağında.</p>
+                    </div>
+
+                    <div class="p-6 rounded-xl bg-brand-dark border border-white/5 hover:border-brand-accent/30 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-full bg-brand-accent/10 flex items-center justify-center mx-auto mb-4 text-brand-accent text-2xl">📱</div>
+                        <h3 class="text-xl font-semibold mb-2">Her Cihazda</h3>
+                        <p class="text-gray-400 text-sm">Telefon, tablet, televizyon veya bilgisayar... İstediğin her yerden izle.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-8 text-center text-gray-500 text-sm border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <p>&copy; 2026 BestLOL. Tüm hakları saklıdır.</p>
+            
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <a href="#" class="w-10 h-10 rounded-full bg-brand-dark border border-white/5 flex items-center justify-center hover:border-brand-accent/30 hover:bg-brand-accent/10 transition-all duration-300 group" aria-label="X (Twitter)">
+                    <span class="text-gray-400 group-hover:text-brand-accent transition-colors duration-300">X</span>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-brand-dark border border-white/5 flex items-center justify-center hover:border-brand-accent/30 hover:bg-brand-accent/10 transition-all duration-300 group" aria-label="Instagram">
+                    <span class="text-gray-400 group-hover:text-brand-accent transition-colors duration-300">IG</span>
+                </a>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
